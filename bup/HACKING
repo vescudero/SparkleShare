@@ -1,0 +1,128 @@
+
+Conventions?  Are you kidding?  OK fine.
+
+Code Branching Model
+====================
+
+The master branch is what we consider the main-line of development,
+and the last, non-rc tag on master is the most recent stable release.
+
+Any branch with a "tmp/" prefix might be rebased (often), so keep that
+in mind when using or depending on one.
+
+Any branch with a "tmp/review/" prefix corresponds to a patchset
+submitted to the mailing list.  We try to maintain these branches to
+make the review process easier for those not as familiar with patches
+via email.
+
+
+Current Trajectory
+==================
+
+Now that we've finished the 0.29.1 release, we're working on 0.30, and
+although we're not certain which new features will be included, here
+are likely candidates:
+
+  - Support for transferring saves between repositories and rewriting
+    branches.
+
+and these are also under consideration:
+
+  - Better VFS performance for large repositories (i.e. fuse, ls,
+    web...).
+
+  - Incremental indexing via inotify.
+
+  - Smarter (and quieter) handling of cross-filesystem metadata.
+
+  - Support for more general purpose push/pull of branches, saves, and
+    tags between repositories.  (See the bup-get patch series.)
+
+If you have the time and inclination, please help review patches
+posted to the list, or post your own.  (See "ways to help" below.)
+
+
+More specific ways to help
+==========================
+
+Testing -- yes please.  
+
+With respect to patches, bup development is handled via the mailing
+list, and all patches should be sent to the list for review (see
+"Submitting Patches" below).
+
+In most cases, we try to wait until we have at least one or two
+"Reviewed-by:" replies to a patch posted to the list before
+incorporating it into master, so reviews are an important way to help.
+We also love a good "Tested-by:" -- the more the merrier.
+
+
+Testing
+=======
+
+You can run the test suite much more quickly via "make -j test" (as
+compared to "make test"), at the expense of slightly more confusing
+output (interleaved parallel test output), and inaccurate intermediate
+success/failure counts, but the final counts displayed should be
+correct.
+
+Individual non-Python tests can be run via "./wvtest run t/TEST" and
+if you'd like to see all of the test output, you can omit the wvtest
+run wrapper: "t/TEST"
+
+Individual Python tests can be run via "./wvtest run ./wvtest.py
+lib/bup/t/TEST", and as above, you can see all the output by omitting
+the wvtest run wrapper like this: "./wvtest.py lib/bup/t/TEST"
+
+
+Submitting patches
+==================
+
+As mentioned, all patches should be posted to the mailing list for
+review, and must be "signed off" by the author before official
+inclusion (see ./SIGNED-OFF-BY).  You can create a "signed off" set of
+patches in ./patches, ready for submission to the list, like this:
+
+    git format-patch -s -o patches origin/master
+
+which will include all of the patches since origin/master on your
+current branch.  Then you can send them to the list like this:
+
+    git send-email --to bup-list@googlegroups.com --compose patches/*
+
+The use of --compose will cause git to ask you to edit a cover letter
+that will be sent as the first message.
+
+It's also possible to handle everything in one step:
+
+    git send-email -s --to bup-list@googlegroups.com --compose origin/master
+
+and you can add --annotate if you'd like to review or edit each patch
+before it's sent.
+
+For single patches, this might be easier:
+
+    git send-email -s --to bup-list@googlegroups.com --annotate -n1 HEAD
+
+which will send the top patch on the current branch, and will stop to
+allow you to add comments.  You can add comments to the section with
+the diffstat without affecting the commit message.
+
+Of course, unless your machine is set up to handle outgoing mail
+locally, you may need to configure git to be able to send mail.  See
+git-send-email(1) for further details.
+
+Oh, and we do have a ./CODING-STYLE, hobgoblins and all, though don't
+let that scare you off.  We're not all that fierce.
+
+
+Even More Generally
+===================
+
+It's not like we have a lot of hard and fast rules, but some of the
+ideas here aren't altogether terrible:
+
+  http://www.kernel.org/doc/Documentation/SubmittingPatches
+
+In particular, we've been paying at least some attention to the bits
+regarding Acked-by:, Reported-by:, Tested-by: and Reviewed-by:.
